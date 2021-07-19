@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { withRouter } from 'react-router-dom';
 import { withState } from '../../hotel-context';
-import { Container,  Button, CssBaseline, TextField, Typography } from '@material-ui/core';
+import { Container, Button, CssBaseline, TextField, Typography, RadioGroup, Radio, FormControlLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import AuthService from '../../services/auth';
 import * as actionTypes from '../../store/actionTypes';
@@ -39,8 +39,9 @@ const styles = makeStyles((theme) => ({
 
 const Auth = (props) => {
 
-    const [email, setEmail] = useState('abc@123.com');
-    const [password, setPassword] = useState('abc123');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [role, setRole] = useState('user');
     const [signup, setSignup] = useState(false);
 
     const classes = styles();
@@ -51,6 +52,10 @@ const Auth = (props) => {
 
     const onPasswordChange = (event) => {
         setPassword(event.target.value);
+    };
+
+    const onRoleChange = (event) => {
+        setRole(event.target.value);
     };
 
     const changeLoginType = () => {
@@ -64,7 +69,7 @@ const Auth = (props) => {
     const formSubmitHandler = (event) => {
         event.preventDefault();
         if (!signup) {
-            AuthService.login({ email: email, password: password })
+            AuthService.login({ email: email, password: password, role: role })
                 .then(res => {
                     props.dispatch({ type: actionTypes.AUTH_SUCCESS, user: res });
                     props.history.goBack();
@@ -73,7 +78,7 @@ const Auth = (props) => {
                     props.dispatch({ type: actionTypes.AUTH_FAIL, error: err.message })
                 })
         } else {
-            AuthService.signup({ email: email, password: password })
+            AuthService.signup({ email: email, password: password, role: role })
                 .then(res => {
                     props.dispatch({ type: actionTypes.AUTH_SUCCESS, user: res });
                     props.history.goBack();
@@ -120,6 +125,10 @@ const Auth = (props) => {
                             autoComplete="current-password"
                             onChange={onPasswordChange}
                         />
+                        <RadioGroup value={role} onChange={onRoleChange}>
+                            <FormControlLabel value="admin" control={<Radio />} label="Admin" />
+                            <FormControlLabel value="user" control={<Radio />} label="User" />
+                        </RadioGroup>
                         <Button
                             type="submit"
                             fullWidth

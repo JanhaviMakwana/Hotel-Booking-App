@@ -28,10 +28,10 @@ exports.signup = async (req, res) => {
         return res.status(400).json({ errors: errors.array() })
     };
 
-    const { email, password } = req.body;
+    const { email, password, role } = req.body;
 
     try {
-        const user = await User.create({ email: email, password: password });
+        const user = await User.create({ email: email, password: password,role: role });
 
         const userWithToken = generateToken(user.get({ raw: true }));
 

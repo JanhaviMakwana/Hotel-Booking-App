@@ -18,8 +18,11 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 db.user = require('../models/user')(sequelize, Sequelize);
 db.order = require('../models/order')(sequelize, Sequelize);
+db.hotel = require('../models/hotel')(sequelize, Sequelize);
+db.hotelImage = require('../models/hotel-image')(sequelize, Sequelize);
+db.hotelFacility = require('./hotel-facility')(sequelize, Sequelize);
 
 db.user.hasMany(db.order);
-db.order.belongsTo(db.user, { constraints: true, onDelete: 'CASCADE' });
-
+db.hotel.hasMany(db.hotelImage);
+db.hotel.hasMany(db.hotelFacility);
 module.exports = db;

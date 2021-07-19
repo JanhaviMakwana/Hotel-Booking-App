@@ -1,6 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router';
-
+import { withState } from '../../../hotel-context';
 import { Card, CardMedia, Button, Container } from '@material-ui/core';
 import RoomIcon from '@material-ui/icons/Room';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
@@ -90,9 +90,9 @@ const style = {
 const Hotel = (props) => {
     const classes = useStyles();
     const hotel = props.hotel;
-    const folder = hotel.foldername;
     const adultType = hotel.persons === '1' ? 'adult' : 'adults';
-    const posterImgUrl = require(`../../../assets/${folder}/${hotel.poster}`).default;
+    const imageName = hotel.hotelImages[0].image;
+    const posterImgUrl = require(`../../../assets/${hotel.hotelName}/${imageName}`).default;
     let review = 'Good';
     if (parseFloat(hotel.ratings) > 9) {
         review = 'Superb';
@@ -109,12 +109,12 @@ const Hotel = (props) => {
         <Container className={classes.hotel} >
             <Card className={classes.poster}>
                 <CardMedia style={{ height: '100%', width: '100%' }} >
-                    <img src={posterImgUrl} className={classes.media} alt={hotel.foldername} />
+                    <img src={posterImgUrl} className={classes.media} alt={hotel.hotelName} />
                 </CardMedia>
             </Card>
             <Container style={{ display: 'flex', flexFlow: 'row', width: 'fit-content' }}>
                 <div className={classes.details}>
-                    <p className={classes.hotelname}>{hotel.name}</p>
+                    <p className={classes.hotelName}>{hotel.name}</p>
                     <p style={{ textAlign: 'left' }}><RoomIcon style={{ fontSize: '17px' }} />{hotel.address}</p>
                     <div className={classes.info}>
                         <p style={style}>{hotel.beds}</p>
@@ -130,6 +130,7 @@ const Hotel = (props) => {
                         </div>
                         <p style={{ color: 'gray' }}>{`${hotel.nights} night ,${hotel.persons} ${adultType}`} </p>
                         <p>{hotel.price}</p>
+
                         <Button
                             style={{ width: '120px', fontWeight: 'bold' }}
                             variant="contained"
@@ -144,4 +145,4 @@ const Hotel = (props) => {
     );
 };
 
-export default withRouter(Hotel);
+export default withRouter(withState(Hotel));

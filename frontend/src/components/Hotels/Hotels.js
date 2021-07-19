@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container } from '@material-ui/core';
 import { withState } from '../../hotel-context';
-import { hotels as HotelsData } from '../../HotelsBank/HotelsBank';
 import { makeStyles } from '@material-ui/styles';
 import Hotel from './Hotel/Hotel';
+import HotelService from '../../services/hotel';
 
 const styles = makeStyles((theme) => ({
     hotels: {
@@ -14,13 +14,28 @@ const styles = makeStyles((theme) => ({
 
 const Hotels = React.memo((props) => {
     const classes = styles();
-    const showHotels = HotelsData.map(hotel => {
-        return <Hotel hotel={hotel} key={hotel.id} />
-    });
+    const [hotels, setHotels] = useState([]);
+
+    useEffect(() => {
+        const fetchHotels = () => {
+            HotelService.getHotels()
+                .then(res => {
+                    console.log(res);
+                    setHotels(res);
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+        };
+        fetchHotels();
+    }, [])
 
     return (
         <Container className={classes.hotels}>
-            {showHotels}
+    
+            {hotels.length > 0  && hotels.map((hotel) => {
+                return <Hotel hotel={hotel} key={hotel.id}/>
+            })}
         </Container>
     );
 });

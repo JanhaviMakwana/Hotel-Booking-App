@@ -7,6 +7,7 @@ import Hotels from './components/Hotels/Hotels';
 import FullHotel from './components/Hotels/FullHotel/FullHotel';
 import BookHotel from './components/BookHotel/BookHotel';
 import Orders from './components/Orders/Orders';
+import AddHotel from './components/AddHotel/AddHotel';
 import Error from './components/Error/Error';
 import { SET_AUTH_DATA } from './store/actionTypes';
 import './App.css';
@@ -54,7 +55,8 @@ class App extends React.Component {
             : <Switch>
               <PublicRoute path='/auth' isAuthenticated={this.props.state.user ? true : false} component={Auth} />
               <PrivateRoutes path='/hotel/:id/book' isAuthenticated={this.props.state.user ? true : false} component={BookHotel} />
-              <PrivateRoutes path='/orders' isAuthenticated={this.props.state.user ? true : false} component={Orders} />
+              <PrivateRoutes path='/orders' isAuthenticated={(this.props.state.user && this.props.state.user.role === 'user') ? true : false} component={Orders} />
+              <PrivateRoutes path='/add-hotel' isAuthenticated={(this.props.state.user && this.props.state.user.role === 'admin') ? true : false} component={AddHotel} />
               <Route path='/hotel/:id' component={FullHotel} />
               <Route path='/' component={Hotels} />
             </Switch>

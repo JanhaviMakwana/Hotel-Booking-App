@@ -1,5 +1,4 @@
 const db = require('../models');
-const Order = db.order;
 
 
 exports.createOrder = async (req, res) => {

@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { withRouter } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
 import { Container, FormLabel, ButtonGroup, Button, Typography, Modal } from '@material-ui/core';
-import { hotels as hotelsBank } from '../../HotelsBank/HotelsBank';
 import ContactData from '../ContactData/ContactData';
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
@@ -34,12 +33,11 @@ const styles = makeStyles(() => ({
 
 const BookHotel = (props) => {
     const classes = styles();
-    const { id } = props.match.params;
-    const hotel = hotelsBank.find(x => x.id === id);
+    const { id, hotelPrice } = props.location;
     const [rooms, setRooms] = useState(1);
     const [show, setShow] = useState(false);
     const [days, setDays] = useState(1);
-    const [price, setPrice] = useState(hotel.price);
+    const [price, setPrice] = useState(hotelPrice);
 
     const addRoomClickHandler = (event) => {
         event.preventDefault();
@@ -114,7 +112,7 @@ const BookHotel = (props) => {
                 >CANCLE</Button>
 
                 <Modal open={show} onClose={() => { setShow(false) }}>
-                    <ContactData data={{ state: { rooms, days, price, hotelId: hotel.id } }} />
+                    <ContactData data={{ state: { rooms, days, price, hotelId: id } }} />
                 </Modal>
             </Container >
         </Container>

@@ -121,9 +121,7 @@ const ContactData = React.memo((props) => {
                             variant="outlined"
                             margin="normal"
                             required
-                            id="ame"
                             label='Name'
-                            autoComplete="ame"
                             value={name}
                             onChange={nameChangeHandler}
                             autoFocus
@@ -134,7 +132,6 @@ const ContactData = React.memo((props) => {
                             margin="normal"
                             required
                             label="Address"
-                            autoComplete="address"
                             autoFocus
                             value={address}
                             onChange={addressChangeHandler}
@@ -144,7 +141,6 @@ const ContactData = React.memo((props) => {
                             margin="normal"
                             required
                             label="Moblie No"
-                            autoComplete="mobile"
                             value={number}
                             onChange={numberChangeHandler}
                             autoFocus

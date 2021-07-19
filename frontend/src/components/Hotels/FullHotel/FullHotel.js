@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import 'react-multi-carousel/lib/styles.css';
 import { withRouter } from 'react-router';
 import { withState } from '../../../hotel-context';
 import Carousel from 'react-multi-carousel';
 import { Container, Button, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
+import { SET_ERROR } from '../../../store/actionTypes';
 import RoomIcon from '@material-ui/icons/Room';
-import { hotels as hotelsBank } from '../../../HotelsBank/HotelsBank';
 import HotelsCarousel from '../HotelsCarousel/HotelsCarousel';
+import HotelService from '../../../services/hotel';
 
 const responsive = {
     superLargeDesktop: {
@@ -66,29 +67,45 @@ const styles = makeStyles((theme) => ({
 
 const FullHotel = (props) => {
     const classes = styles();
-    console.log(props);
     const { id } = props.match.params;
-    const filteredHotel = hotelsBank.find(x => x.id === id);
-    const images = filteredHotel.images;
-    const imageFolder = filteredHotel.foldername;
-    const facilities = filteredHotel.facilities.map((facility, index) => {
-        return <li className={classes.facilities}>{facility}</li>
+    const {dispatch} = props;
+    const [hotel, setHotel] = useState();
+
+    useEffect(() => {
+        const fetechedHotel = () => {
+            HotelService.getHotelById(id)
+                .then(res => {
+                    setHotel(res);
+                })
+                .catch(err => {
+    
+                    dispatch({ type: SET_ERROR, error: err.message });
+                })
+        }
+        fetechedHotel();
+        // eslint-disable-next-line
+    }, [])
+
+
+    const facilities = hotel && hotel.hotelFacilities.map((facility, index) => {
+        return <li className={classes.facilities}>{facility.facility}</li>
     });
 
-    const imageCarousel = images.map((image, index) => {
-        return <HotelsCarousel key={index} image={require(`../../../assets/${imageFolder}/${image}`).default} />
+    const imageCarousel = hotel && hotel.hotelImages.map((image, index) => {
+        return <HotelsCarousel key={index} image={require(`../../../assets/${hotel.hotelName}/${image.image}`).default} />
     });
+
+
 
     const bookClickHandler = (id) => {
         if (props.state.user) {
-            props.history.push(`/hotel/${id}/book`);
-        } else {
             props.history.push({
-                pathname: '/auth',
-                state: {
-                    id: id
-                }
+                pathname: `/hotel/${id}/book`,
+                hotelPrice: hotel.price,
+                id: hotel.id
             });
+        } else {
+            props.history.push('/auth');
         }
     };
 
@@ -103,37 +120,42 @@ const FullHotel = (props) => {
 
     return (
         <div >
-            <Button className={classes.backBtn}
-                variant="contained"
-                color="primary"
-                onClick={backHandler}>
-                Back
-            </Button>
-            <Container>
-                <Container className={classes.head}>
-                    <Container className={classes.section1}>
-                        <p className={classes.hotelName}>{filteredHotel.name}</p>
-                        <Button className={classes.btnBook}
-                            variant="contained"
-                            color="primary"
-                            onClick={() => bookClickHandler(filteredHotel.id)}>
-                            Book
-                        </Button>
-
-                    </Container>
-                    <Typography style={style}><RoomIcon />{filteredHotel.address}</Typography>
-                </Container>
+            {hotel &&
                 <Container>
-                    <Typography style={{ ...style }} className={classes.facilityTitle}>Facilities</Typography>
-                    <ul className={classes.unorderdList}>
-                        {facilities}
-                    </ul>
-                </Container>
-                <Carousel className={classes.carousel} responsive={responsive} infinite={true}
-                    partialVisbile={false}>
-                    {imageCarousel}
-                </Carousel>
-            </Container>
+                    <Button className={classes.backBtn}
+                        variant="contained"
+                        color="primary"
+                        onClick={backHandler}>
+                        Back
+                    </Button>
+                    <Container>
+                        <Container className={classes.head}>
+                            <Container className={classes.section1}>
+                                <p className={classes.hotelName}>{hotel.hotelName}</p>
+                                {(props.state.user && props.state.user.role === 'admin')
+                                    ? null
+                                    : <Button className={classes.btnBook}
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={() => bookClickHandler(hotel.id)}>
+                                        Book
+                                    </Button>}
+
+                            </Container>
+                            <Typography style={style}><RoomIcon />{hotel.address}</Typography>
+                        </Container>
+                        <Container>
+                            <Typography style={{ ...style }} className={classes.facilityTitle}>Facilities</Typography>
+                            <ul className={classes.unorderdList}>
+                                {facilities}
+                            </ul>
+                        </Container>
+                        <Carousel className={classes.carousel} responsive={responsive} infinite={true}
+                            partialVisbile={false}>
+                            {imageCarousel}
+                        </Carousel>
+                    </Container>
+                </Container>}
         </div>
     );
 };

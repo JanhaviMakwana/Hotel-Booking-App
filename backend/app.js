@@ -5,6 +5,7 @@ const PORT = require('./app/config/app.config').appPort;
 const db = require('./app/models');
 const authRoutes = require('./app/routes/auth');
 const orderRoutes = require('./app/routes/order');
+const hotelRoutes = require('./app/routes/hotel');
 
 const app = express();
 app.use(cors({
@@ -19,6 +20,7 @@ app.use(express.urlencoded({
     extended: true
 }));
 
+app.use(hotelRoutes);
 app.use(orderRoutes);
 app.use(authRoutes);
 

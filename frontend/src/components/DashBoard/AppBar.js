@@ -28,7 +28,7 @@ const styles = makeStyles((theme) => ({
     }
 }));
 
-const style= {
+const style = {
     color: 'white'
 }
 
@@ -64,22 +64,36 @@ const AppBarComp = React.memo((props) => {
                     <Typography variant="h6" className={classes.title}>
                         HOTEL BOOKING SYSTEM
                     </Typography>
-                    {props.state.user && <Button onClick={() => { props.history.push('/orders') }}>
-                        <ViewListIcon style={style} />
-                        <Typography style={style} variant="h6">ORDERS </Typography>
-                    </Button>}
+
+                    <Button onClick={homeClickHandler} >
+                        <HomeIcon style={style} />
+                        <Typography className={classes.loginBtn} variant="h6">
+                            Home
+                        </Typography>
+                    </Button>
+
+                    {(props.state.user && props.state.user.role === 'admin')
+                        && 
+                        <Button onClick={() => { props.history.push('/add-hotel') }}>
+                            <ViewListIcon style={style} />
+                            <Typography style={style} variant="h6">ADD HOTEL </Typography>
+                        </Button>
+
+                    }
+                    {(props.state.user && props.state.user.role === 'user')
+                        &&
+                        <Button onClick={() => { props.history.push('/orders') }}>
+                            <ViewListIcon style={style} />
+                            <Typography style={style} variant="h6">ORDERS </Typography>
+                        </Button>
+                    }
                     <Button onClick={handleClickOpen} >
                         <AccountCircleIcon style={style} />
                         <Typography className={classes.loginBtn} variant="h6">
                             {!props.state.user ? 'LOGIN' : 'LOGOUT'}
                         </Typography>
                     </Button>
-                    <Button onClick={homeClickHandler} >
-                        <HomeIcon style={style}/>
-                        <Typography className={classes.loginBtn} variant="h6">
-                            Home
-                        </Typography>
-                    </Button>
+
                 </Toolbar>
             </AppBar>
             <Toolbar />
